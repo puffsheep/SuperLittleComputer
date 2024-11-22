@@ -1,0 +1,108 @@
+The Super Little Computer 1
+16 Bit Computer
+
+SLC ISA
+8 Instructions
+8 Registers
+
+Assembler Notes:
+'#' means decimal
+'0x' means hex
+'0b' means binary
+'r' means register
+
+000 - Add
+001 - Sub
+010 - Move
+011 - Shift
+100 - Store
+101 - Load
+110 - Branch/Trap/Ret
+111 - Halt/Nop
+
+000 - Add
+Syntax:
+	add rA, imm -> 000 0 000 000000000
+	add rA, rB -> 000 1 000 000 xxxxxx
+Opcode: [0:3] (4 Bits)
+- Bit 3 is for immediate or indirect
+Register A: [4:6] (3 Bits)
+Register B: [7:9] (3 Bits)
+Immediate*: [7:15] (9 Bits)
+
+001 - Sub
+Syntax:
+	sub rA, imm -> 001 0 000 000000000
+	sub rA, rB -> 001 1 000 000 xxxxxx
+Opcode: [0:3] (4 Bits)
+- Bit 3 is for immediate or indirect
+Register A: [4:6] (3 Bits)
+Register B: [7:9] (3 Bits)
+Immediate*: [7:15] (9 Bits)
+
+010 - Move
+Syntax: 
+	mov rA, val -> 010 1 000 000000000
+	mov rA, rB -> 010 0 000 000 xxxxxx
+Opcode: [0:2] (3 Bits)
+Register A: [4:6] (3 Bits)
+Register B: [7:9] (3 Bits)
+Immediate*: [7:15] (9 Bits)
+
+011 - Shift
+Syntax:
+	lsh rA, imm -> 011 0 000 00000000 0
+	lsh rA, rB -> 011 0 000 000 xxxxx 1
+
+	rsh rA, imm -> 011 1 000 00000000 0
+	rsh rA, rB -> 011 1 000 000 xxxxx 1
+Opcode: [0:3] + [15] (5 bits)
+Register A: [4:6] (3 Bits)
+Register B: [7:9] (3 Bits)
+Immediate*: [7:14] (8 Bits)
+Mode: [15] (1 Bit)
+
+100 - Store
+Syntax: 
+	st rA, pc_offset -> 101 0 000 000000000
+	st rA, rB -> 101 1 000 000 xxxxxx
+	st rA, rB, offset -> 101 1 000 000 000000
+Opcode: [0:3] (4 Bits)
+- Bit 3 is for immediate or indirect
+Register A: [4:6] (3 Bits)
+Register B: [7:9] (3 Bits)
+PC Offset*: [7:15] (9 Bits)
+Base Offset*: [10:15] (6 Bits)
+
+101 - Load
+Syntax: 
+	ld rA, pc_offset -> 101 0 000 000000000
+	ld rA, rB -> 101 1 000 000 xxxxxx
+	ld rA, rB, offset -> 101 1 000 000 XXXXXX
+Opcode: [0:3] (4 Bits)
+- Bit 3 is for immediate or indirect
+Register A: [4:6] (3 Bits)
+Register B: [7:9] (3 Bits)
+PC Offset*: [7:15] (9 Bits)
+Base Offset*: [10:15] (6 Bits)
+
+110 - Branch
+Syntax:
+	jmp pc_offset -> 110 0 XXXXXXXXX 111
+	jmpeq rA, rB -> 110 0 000 000 xxx 000
+	jmpne rA, rB -> 110 0 000 000 xxx 001
+	jmplt rA, rB -> 110 0 000 000 xxx 010
+	jmpgt rA, rB -> 110 0 000 000 xxx 100
+	jmplte rA, rB -> 110 0 000 000 xxx 011
+	jmpgte rA, rB -> 110 0 000 000 xxx 101
+	jmpz rA -> 110 0 000 000 xxx 110
+	trap 0x14 -> 110 1 XXXXXXXXX 000
+	ret -> 110 1 XXXXXXXXX 001
+Opcode: [0:3] + [13:15] (7 Bits)
+Register A: [4:6]
+Register B: [7:9]
+PC Offset: [4:12] (9 Bits)
+
+111 - Halt/Nop
+Syntax:
+	

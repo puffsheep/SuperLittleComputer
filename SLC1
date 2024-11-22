@@ -1,0 +1,114 @@
+The Super Little Computer 1
+16 Bit Computer
+
+SLC ISA
+8 Instructions
+8 Registers
+
+Assembler Notes:
+'#' means decimal
+'0x' means hex
+'0b' means binary
+'r' means register
+
+Examples:
+add r3, #10 // 000 0 011 00001010 0 - 0x0614
+sub r3, #10 // 000 0 011 00001010 1 - 0x0615
+add r3, r3 // 000 0 011 011 00000 0 - 0x06C0
+sub r3, r4 // 000 0 011 100 00000 1 - 0x06C1
+
+000 - Add
+001 - Sub
+010 - Move
+011 - Shift
+100 - Store
+101 - Load
+110 - Branch/Trap/Ret
+111 - Halt/Nop
+
+000 - Arithmetic (Add/Sub)
+Syntax:
+	add rA, imm -> 000 0 000 00000000 0
+	sub rA, imm -> 000 0 000 00000000 1
+
+	add rA, rB -> 000 1 000 000 xxxxx 0
+	sub rA, rB -> 000 1 000 000 xxxxx 1
+Opcode: [0:3] + [15] (4 Bits)
+- Bit 3 is for immediate or indirect
+Register A: [4:6] (3 Bits)
+Register B: [7:9] (3 Bits)
+Immediate (signed): [7:14] (8 Bits) (imm8)
+
+001 - Logical (And/Or/Xor/Not)
+Syntax:
+	and rA, rB -> 001 x 000 000 xxxx 00
+	or rA, rB -> 001 x 000 000 xxxx 01
+	xor rA, rB -> 001 x 000 000 xxxx 10
+	not rA, rB -> 001 x 000 000 xxxx 11
+Opcode: [0:2] + [14:15] (5 Bits)
+Register A: [4:6] (3 Bits)
+Register B: [7:9] (3 Bits)
+
+010 - Move
+Syntax: 
+	mov rA, val -> 010 1 000 XXXXXXXXX
+	mov rA, rB -> 010 0 000 000 xxxxxx
+Opcode: [0:2] (3 Bits)
+Register A: [4:6] (3 Bits)
+Register B: [7:9] (3 Bits)
+Immediate (signed): [7:15] (9 Bits) (imm9)
+
+011 - Shift
+Syntax:
+	lsh rA, imm -> 011 0 000 XXXXXXXX 0
+	rsh rA, imm -> 011 0 000 XXXXXXXX 1
+
+	lsh rA, rB -> 011 1 000 000 xxxxx 0
+	rsh rA, rB -> 011 1 000 000 xxxxx 1
+Opcode: [0:3] + [15] (5 bits)
+Register A: [4:6] (3 Bits)
+Register B: [7:9] (3 Bits)
+Immediate (unsigned): [7:14] (8 Bits) (imm8)
+Mode: [15] (1 Bit)
+
+100 - Store
+Syntax: 
+	st rA, pc_offset -> 100 0 000 000000000
+	st rA, rB -> 100 1 000 000 xxxxxx
+Opcode: [0:3] (4 Bits)
+- Bit 3 is for immediate or indirect
+Register A: [4:6] (3 Bits)
+Register B: [7:9] (3 Bits)
+PC Offset (signed): [7:15] (9 Bits) (imm9)
+
+101 - Load
+Syntax: 
+	ld rA, pc_offset -> 101 0 000 000000000
+	ld rA, rB -> 101 1 000 000 xxxxxx
+Opcode: [0:3] (4 Bits)
+- Bit 3 is for immediate or indirect
+Register A: [4:6] (3 Bits)
+Register B: [7:9] (3 Bits)
+PC Offset (signed): [7:15] (9 Bits) (imm9)
+
+110 - Branch
+Syntax:
+	brnzp pc_offset -> 110 XXXXXXXXXX 111
+	br pc_offset -> 110 XXXXXXXXXX 000
+	brp pc_offset -> 110 XXXXXXXXXX 001
+	brz pc_offset -> 110 XXXXXXXXXX 010
+	brn pc_offset -> 110 XXXXXXXXXX 100
+	brzp pc_offset -> 110 XXXXXXXXXX 011
+	brnp pc_offset -> 110 XXXXXXXXXX 101
+	brnz pc_offset -> 110 XXXXXXXXXX 110
+Opcode: [0:3] (4 Bits)
+PC Offset: [3:12] (signed) (10 Bits -> max offset 0x3FF) (imm10)
+Condition Codes (nzp): [13:15] (3 Bits)
+
+111 - Nop/Trap/Ret/Halt
+Syntax:
+	trap 0x14 -> 111 0 XXXXXXXXXXXX
+	ret -> 111 1 xxxxxxxxxxx 0
+	nop -> 111 1 xxxxxxxxxxx 1
+Opcode: [0:3] (4 Bits)
+Trap Vector (unsigned): [4:15] (12 Bits) (imm12)
